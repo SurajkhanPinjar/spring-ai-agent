@@ -10,6 +10,8 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public ProductService(ProductRepository productRepository) {
+        Product product = new Product();
+
         this.productRepository = productRepository;
     }
 
