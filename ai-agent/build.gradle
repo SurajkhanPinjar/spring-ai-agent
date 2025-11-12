@@ -1,0 +1,35 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.ai'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+	// --- Apache HTTP Client (needed for Spring Boot 3.x HTTP internals) ---
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+	implementation 'org.apache.httpcomponents.core5:httpcore5:5.3.1'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

@@ -1,0 +1,225 @@
+ps aux | grep python    // to check python runnning
+kill -9 44522
+
+
+source .venv/bin/activate
+curl -X POST http://localhost:5000/review -d 'public class Hello { void hi() { System.out.println("Hi"); } }'
+
+
+
+
+
+
+
+
+⸻
+
+🐍 Python Command Cheat Sheet
+
+A handy reference for Python developers — from setup to everyday scripting and debugging.
+Ideal for beginners and pros who want quick terminal + code-level commands.
+
+⸻
+
+🚀 Setup & Installation
+
+# Check Python version
+python --version
+python3 --version
+
+# Check where Python is installed
+which python       # macOS/Linux
+where python        # Windows
+
+
+⸻
+
+⚙️ Running Python Scripts
+
+python file.py       # Run Python script
+python3 file.py
+
+Interactive Shell
+
+python               # Start Python REPL
+exit()               # Quit REPL
+
+
+⸻
+
+🧰 Package Management (pip)
+
+pip --version                     # Check pip version
+pip install <package>             # Install a package
+pip uninstall <package>           # Remove a package
+pip list                          # Show installed packages
+pip show <package>                # Show package details
+pip freeze > requirements.txt     # Save dependencies
+pip install -r requirements.txt   # Install from file
+
+
+⸻
+
+🧩 Virtual Environment
+
+# Create virtual environment
+python -m venv venv
+
+# Activate environment
+source venv/bin/activate          # macOS/Linux
+venv\Scripts\activate             # Windows
+
+# Deactivate
+deactivate
+
+
+⸻
+
+🗂️ File Operations (In Python)
+
+import os
+
+os.getcwd()             # Get current directory
+os.listdir()            # List all files
+os.mkdir("test_dir")    # Create directory
+os.remove("file.txt")   # Delete file
+
+# Reading a file
+with open("data.txt", "r") as f:
+    print(f.read())
+
+# Writing to a file
+with open("data.txt", "w") as f:
+    f.write("Hello Python!")
+
+
+⸻
+
+📊 Data Structures (In Python)
+
+# List
+nums = [1, 2, 3]
+nums.append(4)
+nums.remove(2)
+nums.sort()
+
+# Dictionary
+user = {"name": "Suraj", "age": 25}
+user.keys()
+user.values()
+
+# Set
+unique = set([1, 2, 2, 3])
+
+
+⸻
+
+🔁 Loops & Conditionals
+
+for i in range(5):
+    print(i)
+
+if age > 18:
+    print("Adult")
+else:
+    print("Minor")
+
+
+⸻
+
+🧠 Built-in Helpers
+
+type(123)        # Check data type
+dir(str)         # List all attributes/methods of str
+help(list)       # Documentation
+
+
+⸻
+
+🧪 Testing & Debugging
+
+python -m unittest discover    # Run all unit tests
+python -m pdb script.py        # Start debugger
+
+Inside your script:
+
+breakpoint()    # Pause execution and start debugger (Python 3.7+)
+
+
+⸻
+
+🌐 Quick Local Server
+
+python -m http.server
+
+Default port: 8000
+Access at: http://localhost:8000￼
+
+⸻
+
+📦 Useful Developer Commands
+
+python -m pip install --upgrade pip   # Upgrade pip
+python -m venv env                    # Create venv
+python -m timeit -s "x=5" "x*x"      # Measure execution time
+
+
+⸻
+
+📊 Jupyter Notebook / Data Science
+
+pip install jupyterlab
+jupyter lab
+
+Inside notebook:
+
+!pip install pandas numpy matplotlib seaborn
+
+
+⸻
+
+🧠 REPL Shortcuts
+
+# Useful shell tricks
+_         # Last output value
+__        # Second last output
+vars()    # Current variables
+
+
+⸻
+
+⚡ VS Code Shortcuts
+
+Action	Shortcut
+Run current file	Ctrl + F5
+Open terminal	Ctrl + `
+Format code	Shift + Alt + F
+Comment line	Ctrl + /
+Restart Jupyter Kernel	0 0
+
+
+⸻
+
+🔥 Pro Tips
+	•	Always use a virtual environment per project.
+	•	Keep a requirements.txt synced using pip freeze.
+	•	For quick experiments, use JupyterLab or ipython.
+	•	Add __main__ block to scripts for best practice:
+
+if __name__ == "__main__":
+    main()
+
+
+
+⸻
+
+🧾 Author
+
+Surajkhan Pinjar
+💻 Backend Engineer | ☕ Java & 🐍 Python Dev
+
+“If no one laughs at your dreams, then your dreams are not big enough.” 🌟
+
+⸻
+
+Would you like me to make this into a GitHub-ready README.md file (with emojis, collapsible sections, and badges) or a Notion-friendly clean version next, macha?
