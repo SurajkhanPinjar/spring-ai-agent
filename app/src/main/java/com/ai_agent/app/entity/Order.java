@@ -20,5 +20,5 @@ public class Order {
     @ManyToOne
     private Product product;
 
-    private Integer quantity;
+
 }

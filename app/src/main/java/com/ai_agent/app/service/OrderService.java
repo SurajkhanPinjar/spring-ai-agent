@@ -1,6 +1,7 @@
 package com.ai_agent.app.service;
 
 import com.ai_agent.app.entity.Order;
+import com.ai_agent.app.entity.User;
 import com.ai_agent.app.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;

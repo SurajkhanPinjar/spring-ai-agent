@@ -1,0 +1,193 @@
+🔥 Superb bro — now you’re moving into enterprise AI integration zone — this is exactly how big product teams design AI-assisted development pipelines.
+
+We’ll now create two main components inside your ai-agent project:
+
+✅ AiReviewService.java — handles sending Java code to your Python AI backend (ai-agent-py on port 5000)
+✅ CodeWatcher.java — continuously monitors your spring-app folder (like /service/ or /controller/) and automatically calls AiReviewService whenever a file changes
+
+⸻
+
+🧠 Folder Structure (ai-agent)
+
+ai-agent/
+└── src/main/java/com/ai_agent/
+    ├── reviewer/
+    │   └── AiReviewService.java   ← sends code to Python AI
+    ├── watcher/
+    │   └── CodeWatcher.java       ← watches files and triggers review
+    └── AiAgentApplication.java
+
+
+⸻
+
+⚙️ 1️⃣ AiReviewService.java
+
+This class sends code to your Python AI Flask service (http://localhost:5000/review) and saves the AI response to /reviewed/.
+
+package com.ai_agent.reviewer;
+
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+
+public class AiReviewService {
+
+    private static final String AI_URL = "http://localhost:5000/review";
+    private static final Path REVIEWED_DIR =
+            Paths.get("../spring-app/src/main/java/com/ai_agent/app/reviewed");
+
+    /**
+     * Sends a Java file's content to the Python AI Agent for code review.
+     * Saves the AI-reviewed output in /reviewed directory.
+     */
+    public static void reviewFile(String filePath) {
+        try {
+            String code = Files.readString(Paths.get(filePath));
+            System.out.println("🧠 Sending file for AI review: " + filePath);
+
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                HttpPost post = new HttpPost(AI_URL);
+                post.setHeader("Content-Type", "text/plain");
+                post.setEntity(new StringEntity(code, StandardCharsets.UTF_8));
+
+                // Execute request and get AI response
+                String response = client.execute(post, httpResponse ->
+                        new String(httpResponse.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8));
+
+                // Save AI-reviewed output
+                saveReviewedFile(filePath, response);
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Failed to review file " + filePath);
+            e.printStackTrace();
+        }
+    }
+
+    private static void saveReviewedFile(String filePath, String content) throws IOException {
+        Files.createDirectories(REVIEWED_DIR);
+        String fileName = Paths.get(filePath).getFileName().toString();
+        Path reviewedFile = REVIEWED_DIR.resolve(fileName.replace(".java", "_Reviewed.java"));
+
+        Files.writeString(reviewedFile, content, StandardCharsets.UTF_8);
+        System.out.println("💾 Saved reviewed file: " + reviewedFile);
+    }
+}
+
+✅ What it does
+	•	Reads Java file content
+	•	Sends it to ai-agent-py (Python Flask app on port 5000)
+	•	Receives the reviewed/optimized code
+	•	Saves result in /reviewed/YourFile_Reviewed.java
+
+⸻
+
+⚙️ 2️⃣ CodeWatcher.java
+
+This continuously watches a target directory (like /service or /controller in spring-app) and calls AiReviewService.reviewFile() automatically.
+
+package com.ai_agent.watcher;
+
+import com.ai_agent.reviewer.AiReviewService;
+import java.io.IOException;
+import java.nio.file.*;
+import static java.nio.file.StandardWatchEventKinds.*;
+
+public class CodeWatcher {
+
+    private static final Path WATCH_PATH =
+            Paths.get("../spring-app/src/main/java/com/ai_agent/app/service");
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        WatchService watchService = FileSystems.getDefault().newWatchService();
+        WATCH_PATH.register(watchService, ENTRY_MODIFY);
+
+        System.out.println("👀 Watching for changes in: " + WATCH_PATH);
+
+        while (true) {
+            WatchKey key = watchService.take();
+
+            for (WatchEvent<?> event : key.pollEvents()) {
+                WatchEvent.Kind<?> kind = event.kind();
+
+                if (kind == ENTRY_MODIFY) {
+                    String fileName = event.context().toString();
+                    if (fileName.endsWith(".java")) {
+                        Path filePath = WATCH_PATH.resolve(fileName);
+                        System.out.println("🔁 File changed: " + fileName);
+                        AiReviewService.reviewFile(filePath.toString());
+                    }
+                }
+            }
+            key.reset();
+        }
+    }
+}
+
+✅ What it does
+	•	Monitors your spring-app/service folder
+	•	Whenever a .java file changes, it automatically sends it for AI review
+	•	The reviewed output is stored in /reviewed/
+
+⸻
+
+💡 Step-by-step to Run
+
+1️⃣ Run your Python AI Agent first:
+
+cd ai-agent-py
+source .venv/bin/activate
+python bug_reviewer.py
+
+2️⃣ Run your Watcher:
+
+cd ai-agent
+./gradlew bootRun --args='com.ai_agent.watcher.CodeWatcher'
+
+or simply run the class in IntelliJ.
+
+3️⃣ Edit any file under:
+
+spring-app/src/main/java/com/ai_agent/app/service/
+
+Example: add a print statement in UserService.java.
+
+4️⃣ You’ll see:
+
+👀 Watching for changes in: ../spring-app/src/main/java/com/ai_agent/app/service
+🔁 File changed: UserService.java
+🧠 Sending file for AI review: ...UserService.java
+💾 Saved reviewed file: ../spring-app/.../reviewed/UserService_Reviewed.java
+
+
+⸻
+
+🧱 Folder After Running
+
+spring-app/
+└── src/main/java/com/ai_agent/app/
+    ├── controller/
+    ├── service/
+    ├── repository/
+    ├── entity/
+    └── reviewed/
+        ├── UserService_Reviewed.java
+        ├── ProductService_Reviewed.java
+
+
+⸻
+
+🧩 Optional Next Step
+
+Once this is working perfectly, you can extend it:
+✅ Automatically trigger test generation after review
+✅ Commit reviewed files to a separate branch
+✅ Notify your team via Slack or email when reviews are ready
+
+⸻
+
+Would you like me to add the Test Generator integration next (so after every AI review, it auto-creates JUnit tests for the same file)?

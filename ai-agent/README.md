@@ -100,7 +100,10 @@ It’s like Jenkins + SonarQube + ChatGPT combined — but written in your own J
 
 ⸻
 
-If you want, I can now help you extend the ai-agent to:
-✅ Automatically generate test cases (/testgen)
-✅ Write the reviewed code to /reviewed/ folder
-✅ Add real-time file watcher integration
+==========================
+RUN INITIALIZE
+cd ai-agent
+./gradlew bootRun --args='com.ai_agent.watcher.CodeWatcher'
+spring-app/src/main/java/com/ai_agent/app/service/
+
+./gradlew bootRun --args='com.ai_agent.watcher.CodeWatcher'
